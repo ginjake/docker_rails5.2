@@ -1,0 +1,63 @@
+version: '2'
+services:
+  datastore:
+    image: busybox
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - bundle_install:/app/vendor/bundle
+      - bundle:/app/.bundle
+      - node_modules:/app/node_modules
+
+  rp:
+    build: ./docker_images/h2o/
+    working_dir: /etc/h2o
+    networks:
+      - default
+    command: h2o -c conf/h2o.conf 
+    ports:
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - .:/app
+    depends_on:
+      - web
+      - datastore
+    extra_hosts:
+      - "localhost:0.0.0.0"
+  db:
+    build: ./docker_images/mysql/
+    environment:
+      - MYSQL_DATABASE=rails_develop
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Japan
+    networks:
+      - default
+    ports:
+      - '3306:3306'
+    volumes_from:
+      - datastore
+  web:
+    build: .
+    volumes:
+      - .:/app_name
+    networks:
+      - default
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes_from:
+      - datastore
+    command: ["bundle", "exec", "rails", "s", "-b", "0.0.0.0", "--early-hints"]
+    environment:
+      - TZ=Japan
+volumes:
+  mysql-data:
+    driver: local
+  bundle_install:
+    driver: local
+  bundle:
+    driver: local
+  node_modules:
+    driver: local
+

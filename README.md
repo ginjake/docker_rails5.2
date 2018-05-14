@@ -1,25 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# docker_rails5.2
+Dockerでrails5.2とmysql8.0とh2oを動かすサンプル
+1 docker-compose build  
+2 docker-compose up
+3  https://localhost/　にアクセス
